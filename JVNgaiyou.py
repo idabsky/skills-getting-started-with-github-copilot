@@ -1,18 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from typing import List
+from pathlib import Path
+import json
 
+#jvndb_ids = load_jvndb_ids("/content/drive/MyDrive/annjvns.txt")
 # 対象のJVNDB ID一覧
-jvndb_ids = [
- ”JVNDB-2025-019514”,
-”JVNDB-2025-019427”,
-”JVNDB-2025-019405”,
-”JVNDB-2025-019332”,
-”JVNDB-2025-019013”,
-”JVNDB-2025-019012”,
-”JVNDB-2025-018974”,
-”JVNDB-2025-018963”
-]
+#jvndb_ids = [
+# "JVNDB-2025-018963",
+#]
 
 base_url = "https://jvndb.jvn.jp/ja/contents/2025/"
 # 検索するセクション見出しの候補（ページによって表現が異なることがあるため複数用意）
@@ -24,7 +21,35 @@ section_titles = [
 TARGET = "1809"  # 大文字小文字を区別して検索（ここは数字なので大小は関係しません）
 START_TOKENS = ["マイクロソフト", "Microsoft"]  # この語の出現位置以降から検索する
 SUMMARY_TOKEN = "概要"  # search_text に '概要' が含まれていればその位置以降から検索
+def load_jvndb_ids(path) -> List[str]:
+    """
+    Load a list of JVNDB IDs from a file.
+    - If the file suffix is .json, it will be parsed as a JSON list.
+    - Otherwise the file is read as text: one ID per line. Blank lines and lines
+      starting with '#' are ignored.
+    Returns a list of strings.
+    """
+    p = Path(path) # Convert string to Path object
+    if not p.exists():
+        raise FileNotFoundError(f"File not found: {p}")
 
+    if p.suffix.lower() == ".json":
+        with p.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            if not isinstance(data, list):
+                raise ValueError("JSON file must contain a list of IDs")
+            return [str(x).strip() for x in data if str(x).strip()]
+
+    # fallback: plain text, one ID per line
+    ids: List[str] = []
+    with p.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            ids.append(line)
+    return ids
+ 
 def extract_section_text(soup, title_candidates):
     """
     指定した見出し候補のうち最初にヒットする見出しを探し、
@@ -81,6 +106,7 @@ def extract_from_start_to_cvs(search_text, cvs_token="CVS"):
     return search_text[:idx].strip()
 
 results = {}
+jvndb_ids = load_jvndb_ids("/content/drive/MyDrive/annjvn.txt")
 
 for jvndb_id in jvndb_ids:
     url = f"{base_url}{jvndb_id}.html"
