@@ -126,7 +126,10 @@ for jvndb_id in jvndb_ids:
         if TARGET in search_text:
             found = True
             snippets = find_target_snippets(search_text, TARGET)
-            extracted_text = extract_from_start_to_cvs(search_text, cvs_token="CVS")
+            extracted_text = extract_from_start_to_cvs(search_text, cvs_token="対策")
+            influed_text = extract_from_start_to_cvs(search_text, cvs_token="CVS")
+        #Summary_token=影響
+            extracted_text=
         else:
             found = False
             snippets = []
