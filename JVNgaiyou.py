@@ -4,7 +4,8 @@ import re
 from typing import List
 from pathlib import Path
 import json
-
+from google.colab import drive
+drive.mount('/content/drive')
 #jvndb_ids = load_jvndb_ids("/content/drive/MyDrive/annjvns.txt")
 # 対象のJVNDB ID一覧
 #jvndb_ids = [
