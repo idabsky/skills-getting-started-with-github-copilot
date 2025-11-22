@@ -129,18 +129,20 @@ for jvndb_id in jvndb_ids:
             extracted_text = extract_from_start_to_cvs(search_text, cvs_token="対策")
             influed_text = extract_from_start_to_cvs(search_text, cvs_token="CVS")
         #Summary_token=影響
-            extracted_text=
+            extracted_text = search_text[search_text.find("される影響"):]
+            append_text = extract_from_start_to_cvs(extracted_text, cvs_token="対策")            
         else:
             found = False
             snippets = []
             extracted_text = None
-
+            append_text = None
         if found:
             results[jvndb_id] = {
                 "url": url,
                 "found": True,
                 "snippets": snippets or ["(見つかりましたがスニペット抽出に失敗しました)"],
-                "extracted": extracted_text or ""
+                "extracted": influed_text or "",
+                "appended": append_text or ""
             }
         else:
             results[jvndb_id] = {
@@ -169,5 +171,8 @@ for k, v in results.items():
             print("-", s)
         print("抽出（開始位置から 'CVS' の直前まで）:")
         print(v["extracted"])
+        print(v["----"])
+        print(v["appended"])
     else:
         print(f"未検出: '{TARGET}' は見つかりませんでした。")
+print("ZZ")
