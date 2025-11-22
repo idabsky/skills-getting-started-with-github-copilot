@@ -171,7 +171,7 @@ for k, v in results.items():
             print("-", s)
         print("抽出（開始位置から 'CVS' の直前まで）:")
         print(v["extracted"])
-        print(v["----"])
+        print("----")
         print(v["appended"])
     else:
         print(f"未検出: '{TARGET}' は見つかりませんでした。")
